@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using AdronCore.Connectors.Components;
 using AdronCore.Rpc;
 using AdronCore.Rpc.Modules.Transactions;
 using AdronCore.Tools.Notification;
+using Newtonsoft.Json;
 
 namespace AdronCore.Platforms.Dotnet.RPC
 {
@@ -16,7 +16,7 @@ namespace AdronCore.Platforms.Dotnet.RPC
         {
             if (contractInteraction != null)
             {
-                var requestdata = JsonRpcHandler.GenerateContractRequestData(contractInteraction.ContractAdress,contractInteraction.EntryPoint,contractInteraction.CallData);
+                var requestdata = JsonRpcHandler.GenerateContractRequestData(contractInteraction.ContractAdress, contractInteraction.EntryPoint, contractInteraction.CallData);
                 var response = await SendPostRequest(requestdata);
 
                 if (response == null || response.error != null)
@@ -85,16 +85,7 @@ namespace AdronCore.Platforms.Dotnet.RPC
                 }
                 else
                 {
-                    string resultString = response.result as string;
-                    if (!string.IsNullOrEmpty(resultString))
-                    {
-                        Callback?.Invoke(new JsonRpcResponse { result = resultString });
-                    }
-                    else
-                    {
-
-                        Console.WriteLine(requestData);
-                    }
+                    Callback?.Invoke(response);
                 }
             }
             catch (Exception ex)
@@ -119,7 +110,7 @@ namespace AdronCore.Platforms.Dotnet.RPC
 
                 try
                 {
-                    var response =  httpClient.PostAsync(Settings.Settings.apiurl, content).Result;
+                    var response = httpClient.PostAsync(Settings.Settings.apiurl, content).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
