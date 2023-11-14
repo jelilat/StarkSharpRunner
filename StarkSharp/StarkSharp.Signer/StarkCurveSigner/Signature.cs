@@ -38,7 +38,7 @@ namespace AdronCore.StarkCurve.Signature
 
     public static class ECDSA
     {
-        private const string PedersenHashPointFilename = "StarkSharpRunner/StarkSharp/StarkSharp.Signer/StarkCurveSigner/pedersen_params.json"; // Hey, Adjust according to your File Directory
+        private const string PedersenHashPointFilename = "StarkSharp/StarkSharp.Signer/StarkCurveSigner/pedersen_params.json";
         private static readonly StarkCurveParameters PedersenParams = JsonConvert.DeserializeObject<StarkCurveParameters>(File.ReadAllText(PedersenHashPointFilename));
 
         // Field parameters.
@@ -239,6 +239,7 @@ namespace AdronCore.StarkCurve.Signature
             while (true)
             {
                 var k = GenerateKRFC6979(msgHash, privKey, seed);
+                k = BigInt.Abs(k); // Ensure k is positive
                 seed = seed.HasValue ? seed + 1 : new BigInt(1); // Update seed for next iteration in case the value of k is bad.
 
                 BigInt r = CalculateR(k);
@@ -288,7 +289,7 @@ namespace AdronCore.StarkCurve.Signature
             MathUtils.ECPoint result = shiftPoint;
             for (int i = 0; i < NElementBitsEcdsa; i++)
             {
-                PreventInvalidOperation(result, point);  
+                PreventInvalidOperation(result, point);
 
                 if (IsBitSet(m, 0))
                     result = MathUtils.ECAdd(result, point, FieldPrime);
