@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using AdronCore.Rpc.Modules.Transactions.Prefix;
+using AdronCore.Connectors.Components;
 using AdronCore.StarkCurve.Signature;
 
 namespace AdronCore.Rpc.Modules.Transactions.Hash
@@ -51,13 +52,13 @@ namespace AdronCore.Rpc.Modules.Transactions.Hash
                 return calldata.ToArray();
             }
 
-            public static string[] FormatCalldata(Call[] callArray, int cairoVersion)
+            public static string[] FormatCalldata(Call[] callArray, CairoVersion cairoVersion)
             {
-                return cairoVersion == 0 ? FormatCalldataCairo0(callArray) : FormatCalldataOther(callArray);
+                return cairoVersion == CairoVersion.Version0 ? FormatCalldataCairo0(callArray) : FormatCalldataOther(callArray);
             }
-            public static string ComputeCalldataHash(Call[] callArray, int cairoVersion)
+            public static string ComputeCalldataHash(Call[] callArray, CairoVersion cairoVersion)
             {
-                return cairoVersion == 0 ? ComputeCalldataHashCairo0(callArray) : ComputeCalldataHashOther(callArray);
+                return cairoVersion == CairoVersion.Version0 ? ComputeCalldataHashCairo0(callArray) : ComputeCalldataHashOther(callArray);
             }
             public static string ComputeCalldataHashOther(Call[] callArray)
             {

@@ -45,8 +45,9 @@ namespace AdronCore.Rpc.Modules.Transactions
                     Data = transaction.FunctionArgs
                 }
             };
-            _calldataHash = "0x" + TransactionHash.Hash.ComputeCalldataHash(callArray, 1);
-            _calldata = TransactionHash.Hash.FormatCalldata(callArray, (int)transaction.CairoVersion);
+
+            _calldataHash = "0x" + TransactionHash.Hash.ComputeCalldataHash(callArray, transaction.CairoVersion);
+            _calldata = TransactionHash.Hash.FormatCalldata(callArray, transaction.CairoVersion);
 
             string[] request = { "latest", _senderAddress };
             return JsonRpcHandler.GenerateRequestData("starknet_getNonce", request);
@@ -66,12 +67,12 @@ namespace AdronCore.Rpc.Modules.Transactions
                         _calldataHash,
                         _maxFee,
                         _chainId,
-                        nonce.ToString(),
+                        _nonce,
                         TransactionHash.Hash.HexToBigInteger(_privateKey)
                     );
                     string r = TransactionHash.Hash.BigIntegerToHex(signature.R);
                     string s = TransactionHash.Hash.BigIntegerToHex(signature.S);
-                    //platform.PlatformLog("Transaction signed. R: " + signature.R + ", S: " + signature.S, NotificationType.Info);
+
                     var transactionRequest = new object[]
                     {
                         new
@@ -82,7 +83,7 @@ namespace AdronCore.Rpc.Modules.Transactions
                             max_fee = _maxFee,
                             version = "0x1",
                             signature = new string[] { r, s },
-                            nonce = nonce.ToString()
+                            nonce = _nonce
                         }
                     };
 
