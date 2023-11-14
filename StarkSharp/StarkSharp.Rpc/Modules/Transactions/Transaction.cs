@@ -166,18 +166,14 @@ namespace AdronCore.Rpc.Modules.Transactions
         }
 
 
-        private static void OnTransactionSendComplete(Platform platform, object result)
+        private static void OnTransactionSendComplete(Platform platform, object response)
         {
-            JsonRpcResponse response = result as JsonRpcResponse;
-            if (response != null)
+            var jsonResponse = ((JsonRpcResponse)response);
+            if (jsonResponse != null)
             {
-                string jsonResponse = JsonConvert.SerializeObject(response, Formatting.Indented);
-
-                JObject jsonObject = JObject.Parse(jsonResponse);
-
-                if (jsonObject["error"] != null)
+                if (jsonResponse.error != null)
                 {
-                    string errorMessage = jsonObject["error"]["message"]?.ToString() ?? "No error message provided";
+                    string errorMessage = jsonResponse.error?.ToString() ?? "No error message provided";
                     platform.PlatformLog($"Transaction send; But Transaction Status Failed! {errorMessage}", NotificationType.Error);
                 }
                 else
